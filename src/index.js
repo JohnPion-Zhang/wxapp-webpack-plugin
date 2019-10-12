@@ -251,6 +251,7 @@ export default class WXAppPlugin {
 		);
 
 		const components = new Set();
+		await this.getComponents(components, resolve(this.base, 'app'))
 		for (const page of pages) {
 			await this.getComponents(components, resolve(this.base, page));
 		}
@@ -395,7 +396,10 @@ export default class WXAppPlugin {
 			.filter(resource => resource !== 'app')
 			.forEach(resource => {
 				const fullPath = this.getFullScriptPath(resource);
-				this.addScriptEntry(compiler, fullPath, resource);
+				if (typeof fullPath === 'undefined') {
+ 					throw new Error(`ENOENT: no such file or directory, '${resource}'`);
+ 				}
+ 				this.addScriptEntry(compiler, fullPath, resource);
 			});
 	}
 
